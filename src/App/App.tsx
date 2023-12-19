@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  DeviceEventEmitter,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -9,6 +10,8 @@ import {useEffect} from 'react';
 import styles from './styles';
 import {Provider} from 'react-native-paper';
 import {Home} from '../components/pages';
+// import {DeviceEventEmitter} from 'react-native';
+import Beacons from 'react-native-beacons-manager';
 
 const requestBluetoothPermission = async () => {
   if (Platform.OS === 'ios') {
@@ -53,10 +56,52 @@ const requestBluetoothPermission = async () => {
   return false;
 };
 
+const region = {
+  identifier: 'esp tag app',
+  uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+};
+
 function App(): React.JSX.Element {
   useEffect(() => {
     requestBluetoothPermission();
+    rangeBeacons();
   }, []);
+
+  const rangeBeacons = async () => {
+    if (Platform.OS === 'android') {
+      Beacons.detectIBeacons();
+    } else {
+      Beacons.requestWhenInUseAuthorization();
+      Beacons.startMonitoringForRegion(region);
+    }
+
+    try {
+      await Beacons.startRangingBeaconsInRegion(region.identifier, region.uuid);
+      console.log('Beacons ranging started succesfully!');
+    } catch (err) {
+      console.log(`Beacons ranging not started, error: ${err}`);
+    }
+
+    if (Platform.OS === 'ios') {
+      Beacons.startUpdatingLocation();
+    }
+
+    // Listen for beacon changes
+    DeviceEventEmitter.addListener('beaconsDidRange', data => {
+      console.log('Found beacons!', data.beacons);
+      // data.region - The current region
+      // data.region.identifier
+      // data.region.uuid
+      // data.beacons - Array of all beacons inside a region
+      //  in the following structure:
+      //    .uuid
+      //    .major - The major version of a beacon
+      //    .minor - The minor version of a beacon
+      //    .rssi - Signal strength: RSSI value (between -100 and 0)
+      //    .proximity - Proximity value, can either be "unknown", "far", "near" or "immediate"
+      //    .accuracy - The accuracy of a beacon
+    });
+  };
 
   return (
     <Provider>

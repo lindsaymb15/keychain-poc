@@ -1,6 +1,7 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
 import {BleManager, Device} from 'react-native-ble-plx';
+import {encode} from 'base-64';
 
 interface Hook {
   compatibleDevicesModalVisible: boolean;
@@ -33,74 +34,83 @@ export function useHome(): Hook {
 
   const [compatibleDevice, setCompatibleDevice] = useState<Device>();
 
+  function uint16ToBase64(uint16Value: number) {
+    // Convert Uint16 to Uint8Array
+    const uint8Array = new Uint8Array([
+      // eslint-disable-next-line no-bitwise
+      uint16Value & 0xff,
+      // eslint-disable-next-line no-bitwise
+      (uint16Value >> 8) & 0xff,
+    ]);
+    // Convert Uint8Array to binary string
+    let binaryString = '';
+    uint8Array.forEach(byte => {
+      binaryString += String.fromCharCode(byte);
+    });
+    // Convert binary string to Base64
+    const base64String = encode(binaryString);
+    return base64String;
+  }
+
   const connectToDevice = (device: Device) => {
     bleManager
-      .connectToDevice(device.id, {
-        refreshGatt: 'OnConnected',
+      .connectToDevice(device.id)
+      .then(async () => {
+        await device.discoverAllServicesAndCharacteristics();
+        const services = await device.services();
+        const service = services[0];
+        const characteristics = await device.characteristicsForService(
+          service.uuid,
+        );
+        const readWriteCharacteristic = characteristics[0];
+        const result = await readWriteCharacteristic.writeWithResponse(
+          uint16ToBase64(1),
+        );
+        console.log('WRITE RESULT', result);
+        device.cancelConnection();
       })
-      .then(connDevice => {
-        console.log(connDevice);
-        console.log(connDevice.id);
-        console.log(connDevice.name);
-        // return;
-        // console.log(device.characteristicsForService())
-        // bleManager.discoverAllServicesAndCharacteristicsForDevice(
-        //   connDevice.id,
-        // );
+      .catch(error => {
+        console.log(error);
+        device.cancelConnection();
       });
-    // device
-    //   .connect()
-    //   // eslint-disable-next-line @typescript-eslint/no-shadow
-    //   .then(async device => {
-    //     console.log('device connected!', device);
-    //     setConnectionStatus('Connected');
-    //     await device.discoverAllServicesAndCharacteristics();
-    //     const services = await device.services();
-    //     return services;
-    //   })
-    //   .then(services => {
-    //     let service = services.find(
-    //       // eslint-disable-next-line @typescript-eslint/no-shadow
-    //       service => service.uuid === '00000200-0000-1000-8000-00805f9b34fb',
-    //     );
-    //     return service?.characteristics();
-    //   })
-    //   .then(characteristics => {
-    //     console.log(characteristics);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //     setConnectionStatus('Error');
-    //   })
   };
-
-  // useEffect(() => {
-  //   console.log(compatibleDevice);
-  // }, [compatibleDevice]);
 
   const lookForDevices = () => {
     setConnectionStatus('Searching');
-    setTimeout(function () {
-      if (!compatibleDevice) {
-        bleManager.stopDeviceScan();
-        setConnectionStatus('Error');
-      }
-    }, 10000);
-    bleManager.startDeviceScan(null, null, (error, device) => {
-      // console.log(device);
-      if (error) {
-        console.error(error);
-        bleManager.stopDeviceScan();
-        setConnectionStatus('Error');
-        return;
-      }
-      if (device?.localName === 'ESP TAG APP') {
-        bleManager.stopDeviceScan();
-        setCompatibleDevice(device);
-        setConnectionStatus('Device found');
-      }
-    });
   };
+
+  useEffect(() => {
+    if (connectionStatus === 'Searching') {
+      setTimeout(function () {
+        if (!compatibleDevice) {
+          bleManager.stopDeviceScan();
+          setConnectionStatus('Error');
+        }
+      }, 10000);
+      bleManager.startDeviceScan(null, null, (error, device) => {
+        if (error) {
+          console.error(error);
+          bleManager.stopDeviceScan();
+          setConnectionStatus('Error');
+          return;
+        }
+        if (device) {
+          console.log(device?.name, device?.id, device?.localName);
+        }
+        if (
+          device?.localName === 'ESP TAG APP' ||
+          device?.name === 'ESP_TAG_POC' ||
+          device?.id === 'FB23D2C2-FF7B-DE57-F0F8-7E840692BBA6'
+        ) {
+          console.log(device);
+          bleManager.stopDeviceScan();
+          setCompatibleDevice(device);
+          setConnectionStatus('Device found');
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectionStatus]);
 
   const showCompatibleDevicesModal = () => {
     lookForDevices();

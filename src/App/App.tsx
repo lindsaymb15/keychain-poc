@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  DeviceEventEmitter,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -9,6 +10,8 @@ import {useEffect} from 'react';
 import styles from './styles';
 import {Provider} from 'react-native-paper';
 import {Home} from '../components/pages';
+// import {DeviceEventEmitter} from 'react-native';
+import Beacons from 'react-native-beacons-manager';
 
 const requestBluetoothPermission = async () => {
   if (Platform.OS === 'ios') {
@@ -53,9 +56,68 @@ const requestBluetoothPermission = async () => {
   return false;
 };
 
+export interface Beacon {
+  uuid: string;
+  major: number;
+  minor: number;
+  rssi: number;
+  proximity: string;
+  accuracy: number;
+}
+
 function App(): React.JSX.Element {
   useEffect(() => {
     requestBluetoothPermission();
+    rangeBeacons();
+  }, []);
+
+  const rangeBeacons = async () => {
+    const region = {
+      identifier: 'ESP TAG APP',
+      uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
+      major: 10167,
+      minor: 61958,
+    };
+
+    if (Platform.OS === 'android') {
+      Beacons.detectIBeacons();
+    } else {
+      Beacons.requestAlwaysAuthorization();
+      Beacons.startMonitoringForRegion(region);
+    }
+
+    try {
+      await Beacons.startRangingBeaconsInRegion(region);
+      console.log('Beacons ranging started succesfully!');
+    } catch (err) {
+      console.log(`Beacons ranging not started, error: ${err}`);
+    }
+
+    if (Platform.OS === 'ios') {
+      Beacons.startUpdatingLocation();
+    }
+  };
+
+  useEffect(() => {
+    DeviceEventEmitter.addListener('beaconsDidRange', data => {
+      console.log('Found beacons!', data.beacons);
+      data.beacons.map((beacon: Beacon) => {
+        if (
+          beacon.accuracy > 0 &&
+          beacon.uuid === 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825'
+        ) {
+          const distance = Math.pow(10, (-69 - beacon.rssi) / (10 * 2));
+          console.log('Distance', distance);
+        }
+      });
+    });
+
+    DeviceEventEmitter.addListener('regionDidEnter', data => {
+      console.log('regionDidEnter', data);
+    });
+    DeviceEventEmitter.addListener('regionDidExit', data => {
+      console.log('regionDidExit', data);
+    });
   }, []);
 
   return (

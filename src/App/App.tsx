@@ -56,10 +56,14 @@ const requestBluetoothPermission = async () => {
   return false;
 };
 
-const region = {
-  identifier: 'esp tag app',
-  uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
-};
+export interface Beacon {
+  uuid: string;
+  major: number;
+  minor: number;
+  rssi: number;
+  proximity: string;
+  accuracy: number;
+}
 
 function App(): React.JSX.Element {
   useEffect(() => {
@@ -68,15 +72,22 @@ function App(): React.JSX.Element {
   }, []);
 
   const rangeBeacons = async () => {
+    const region = {
+      identifier: 'ESP TAG APP',
+      uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
+      major: 10167,
+      minor: 61958,
+    };
+
     if (Platform.OS === 'android') {
       Beacons.detectIBeacons();
     } else {
-      Beacons.requestWhenInUseAuthorization();
+      Beacons.requestAlwaysAuthorization();
       Beacons.startMonitoringForRegion(region);
     }
 
     try {
-      await Beacons.startRangingBeaconsInRegion(region.identifier, region.uuid);
+      await Beacons.startRangingBeaconsInRegion(region);
       console.log('Beacons ranging started succesfully!');
     } catch (err) {
       console.log(`Beacons ranging not started, error: ${err}`);
@@ -85,23 +96,29 @@ function App(): React.JSX.Element {
     if (Platform.OS === 'ios') {
       Beacons.startUpdatingLocation();
     }
+  };
 
-    // Listen for beacon changes
+  useEffect(() => {
     DeviceEventEmitter.addListener('beaconsDidRange', data => {
       console.log('Found beacons!', data.beacons);
-      // data.region - The current region
-      // data.region.identifier
-      // data.region.uuid
-      // data.beacons - Array of all beacons inside a region
-      //  in the following structure:
-      //    .uuid
-      //    .major - The major version of a beacon
-      //    .minor - The minor version of a beacon
-      //    .rssi - Signal strength: RSSI value (between -100 and 0)
-      //    .proximity - Proximity value, can either be "unknown", "far", "near" or "immediate"
-      //    .accuracy - The accuracy of a beacon
+      data.beacons.map((beacon: Beacon) => {
+        if (
+          beacon.accuracy > 0 &&
+          beacon.uuid === 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825'
+        ) {
+          const distance = Math.pow(10, (-69 - beacon.rssi) / (10 * 2));
+          console.log('Distance', distance);
+        }
+      });
     });
-  };
+
+    DeviceEventEmitter.addListener('regionDidEnter', data => {
+      console.log('regionDidEnter', data);
+    });
+    DeviceEventEmitter.addListener('regionDidExit', data => {
+      console.log('regionDidExit', data);
+    });
+  }, []);
 
   return (
     <Provider>

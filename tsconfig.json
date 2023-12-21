@@ -2,5 +2,6 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,
+    "typeRoots": ["./types", "./node_modules/@types"]
   }
 }

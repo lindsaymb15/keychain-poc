@@ -5,11 +5,18 @@ import {PlusIcon} from '../../../assets/icons';
 
 export interface ButtonProps {
   onClick: () => void;
+  disabled: boolean;
 }
 
-export default function RoundedButtonWithIcon({onClick}: ButtonProps) {
+export default function RoundedButtonWithIcon({
+  onClick,
+  disabled,
+}: ButtonProps) {
   return (
-    <TouchableOpacity style={styles.roundedButton} onPress={onClick}>
+    <TouchableOpacity
+      style={styles.roundedButton}
+      onPress={onClick}
+      disabled={disabled}>
       <PlusIcon />
     </TouchableOpacity>
   );

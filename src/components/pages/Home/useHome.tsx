@@ -1,7 +1,12 @@
 import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
-import {BleManager, Device} from 'react-native-ble-plx';
+import {BleManager, Characteristic, Device} from 'react-native-ble-plx';
 import {encode} from 'base-64';
+import {useAppContext} from '../../../App/App';
+
+interface HomeProps {
+  currentDistance: number;
+}
 
 interface Hook {
   compatibleDevicesModalVisible: boolean;
@@ -22,8 +27,22 @@ interface Hook {
   compatibleDevice?: Device;
 }
 
-export function useHome(): Hook {
+export function useHome({currentDistance}: HomeProps): Hook {
   const bleManager = new BleManager();
+
+  const {state: contextState, dispatch} = useAppContext();
+
+  const handleSaveDevice = (readWriteCharacteristic: Characteristic) => {
+    dispatch({
+      type: 'SET_DEVICE',
+      payload: {
+        device: compatibleDevice,
+        alertDistance: newDeviceDistance,
+        name: newDeviceName,
+        rwCharacteristic: readWriteCharacteristic,
+      },
+    });
+  };
 
   const [compatibleDevicesModalVisible, setCompatibleDevicesModalVisible] =
     useState(false);
@@ -33,6 +52,8 @@ export function useHome(): Hook {
   const [newDeviceDistance, setNewDeviceDistance] = useState('2');
 
   const [compatibleDevice, setCompatibleDevice] = useState<Device>();
+
+  // const [isAlerted, setIsAlerted] = useState(false);
 
   function uint16ToBase64(uint16Value: number) {
     // Convert Uint16 to Uint8Array
@@ -52,27 +73,56 @@ export function useHome(): Hook {
     return base64String;
   }
 
-  const connectToDevice = (device: Device) => {
+  const connectToDevice = (
+    device: Device,
+    sendAlert: boolean,
+    isAlertTurnOn = true,
+  ) => {
     bleManager
       .connectToDevice(device.id)
-      .then(async () => {
-        await device.discoverAllServicesAndCharacteristics();
-        const services = await device.services();
-        const service = services[0];
-        const characteristics = await device.characteristicsForService(
-          service.uuid,
-        );
-        const readWriteCharacteristic = characteristics[0];
-        const result = await readWriteCharacteristic.writeWithResponse(
-          uint16ToBase64(1),
-        );
-        console.log('WRITE RESULT', result);
-        device.cancelConnection();
+      .then(async connDevice => {
+        try {
+          console.log('device connected');
+          await connDevice.discoverAllServicesAndCharacteristics();
+          const services = await connDevice.services();
+          const service = services[0];
+          const characteristics = await connDevice.characteristicsForService(
+            service.uuid,
+          );
+          const readWriteCharacteristic = characteristics[0];
+          if (!sendAlert) {
+            handleSaveDevice(readWriteCharacteristic);
+          }
+          if (sendAlert) {
+            const writeValue = isAlertTurnOn
+              ? uint16ToBase64(1)
+              : uint16ToBase64(0);
+            readWriteCharacteristic
+              .writeWithResponse(writeValue)
+              .then(() => connDevice.cancelConnection());
+          }
+        } catch (error) {
+          console.log(error);
+          connDevice.cancelConnection;
+        }
       })
       .catch(error => {
         console.log(error);
-        device.cancelConnection();
       });
+  };
+
+  const alertDevice = async () => {
+    const device = contextState.device?.device;
+    const deviceId = contextState.device?.device?.id;
+
+    if (device && deviceId) {
+      const subscription = bleManager.onStateChange(state => {
+        if (state === 'PoweredOn') {
+          connectToDevice(device, true);
+          subscription.remove();
+        }
+      }, true);
+    }
   };
 
   const lookForDevices = () => {
@@ -80,37 +130,57 @@ export function useHome(): Hook {
   };
 
   useEffect(() => {
+    if (
+      contextState.device &&
+      currentDistance > parseInt(contextState.device.alertDistance, 10)
+    ) {
+      contextState.device.device && alertDevice();
+    }
+    // else if (
+    //   contextState.device &&
+    //   isAlerted &&
+    //   currentDistance < parseInt(contextState.device.alertDistance, 10)
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDistance, contextState.device]);
+
+  useEffect(() => {
     if (connectionStatus === 'Searching') {
-      setTimeout(function () {
-        if (!compatibleDevice) {
-          bleManager.stopDeviceScan();
-          setConnectionStatus('Error');
+      const subscription = bleManager.onStateChange(state => {
+        if (state === 'PoweredOn') {
+          scanAndConnect();
+          subscription.remove();
         }
-      }, 10000);
-      bleManager.startDeviceScan(null, null, (error, device) => {
-        if (error) {
-          console.error(error);
-          bleManager.stopDeviceScan();
-          setConnectionStatus('Error');
-          return;
-        }
-        if (device) {
-          console.log(device?.name, device?.id, device?.localName);
-        }
-        if (
-          device?.localName === 'ESP TAG APP' ||
-          device?.name === 'ESP_TAG_POC' ||
-          device?.id === 'FB23D2C2-FF7B-DE57-F0F8-7E840692BBA6'
-        ) {
-          console.log(device);
-          bleManager.stopDeviceScan();
-          setCompatibleDevice(device);
-          setConnectionStatus('Device found');
-        }
-      });
+      }, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionStatus]);
+
+  const scanAndConnect = () => {
+    setTimeout(function () {
+      if (!compatibleDevice) {
+        bleManager.stopDeviceScan();
+        setConnectionStatus('Error');
+      }
+    }, 10000);
+    bleManager.startDeviceScan(null, null, (error, device) => {
+      if (error) {
+        console.error(error);
+        bleManager.stopDeviceScan();
+        setConnectionStatus('Error');
+        return;
+      }
+      if (
+        device?.localName === 'ESP TAG APP' ||
+        device?.name === 'ESP_TAG_POC' ||
+        device?.id === 'FB23D2C2-FF7B-DE57-F0F8-7E840692BBA6'
+      ) {
+        bleManager.stopDeviceScan();
+        setCompatibleDevice(device);
+        setConnectionStatus('Device found');
+      }
+    });
+  };
 
   const showCompatibleDevicesModal = () => {
     lookForDevices();
@@ -132,15 +202,14 @@ export function useHome(): Hook {
   const hideAddDeviceModal = () => setAddDeviceModalVisible(false);
 
   const addDevice = () => {
-    console.log('Adding device: ', newDeviceName);
     if (Platform.OS === 'ios') {
       bleManager.onStateChange(state => {
         if (state === 'PoweredOn' && compatibleDevice) {
-          connectToDevice(compatibleDevice);
+          connectToDevice(compatibleDevice, false);
         }
       });
     } else {
-      compatibleDevice && connectToDevice(compatibleDevice);
+      compatibleDevice && connectToDevice(compatibleDevice, false);
     }
     hideAddDeviceModal();
   };

@@ -11,7 +11,7 @@ import {
 import styles from './styles';
 import {Modal, Portal, ActivityIndicator} from 'react-native-paper';
 import {useHome} from './useHome';
-import {Header} from '../../molecules';
+import {Device, Header} from '../../molecules';
 import {ErrorBoxImage} from '../../../assets/images';
 import {
   MinusIcon,
@@ -25,8 +25,13 @@ import {
   COLOR_PRIMARY_DARK,
   COLOR_SECONDARY,
 } from '../../../constants/theme';
+import {useAppContext} from '../../../App/App';
 
-export default function Home() {
+export interface HomeProps {
+  currentDistance: number;
+}
+
+export default function Home({currentDistance}: HomeProps) {
   const {
     compatibleDevicesModalVisible,
     hideCompatibleDevicesModal,
@@ -44,7 +49,9 @@ export default function Home() {
     increaseDistance,
     decreaseDistance,
     compatibleDevice,
-  } = useHome();
+  } = useHome({currentDistance});
+
+  const {state} = useAppContext();
 
   return (
     <>
@@ -54,21 +61,33 @@ export default function Home() {
         <Text style={[styles.text, styles.welcomeText]}>Welcome!</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <ErrorBoxImage style={styles.noDevicesImage} />
-        <Text style={styles.noDevicesText}>
-          You haven't registered any device
-        </Text>
-        {/* <Device
-          deviceName="My device"
-          alertDistance={2}
-          currentLocation="With you"
-        /> */}
+        {state.device ? (
+          <Device
+            deviceName={state.device.name}
+            alertDistance={parseInt(state.device.alertDistance, 10)}
+            currentLocation={
+              currentDistance <= parseInt(state.device.alertDistance, 10)
+                ? 'With you'
+                : `${currentDistance.toFixed(2)} meters away.`
+            }
+          />
+        ) : (
+          <>
+            <ErrorBoxImage style={styles.noDevicesImage} />
+            <Text style={styles.noDevicesText}>
+              You haven't registered any device
+            </Text>
+          </>
+        )}
       </ScrollView>
       <View style={styles.homeButtonsContainer}>
         {/* to do: convert to butttons */}
         <SettingsIcon />
         <View style={styles.addButtonContainer}>
-          <RoundedButtonWithIcon onClick={showCompatibleDevicesModal} />
+          <RoundedButtonWithIcon
+            onClick={showCompatibleDevicesModal}
+            disabled={state.device !== null}
+          />
         </View>
         <ProfileIcon />
       </View>

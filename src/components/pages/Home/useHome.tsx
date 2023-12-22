@@ -99,7 +99,13 @@ export function useHome({currentDistance}: HomeProps): Hook {
               : uint16ToBase64(0);
             readWriteCharacteristic
               .writeWithResponse(writeValue)
-              .then(() => connDevice.cancelConnection());
+              .then(() => connDevice.cancelConnection())
+              .catch(err => {
+                console.log(err);
+                connDevice.cancelConnection();
+              });
+          } else {
+            connDevice.cancelConnection();
           }
         } catch (error) {
           console.log(error);
@@ -118,6 +124,7 @@ export function useHome({currentDistance}: HomeProps): Hook {
     if (device && deviceId) {
       const subscription = bleManager.onStateChange(state => {
         if (state === 'PoweredOn') {
+          console.log('emit');
           connectToDevice(device, true);
           subscription.remove();
         }
@@ -130,6 +137,7 @@ export function useHome({currentDistance}: HomeProps): Hook {
   };
 
   useEffect(() => {
+    console.log(currentDistance);
     if (
       contextState.device &&
       currentDistance > parseInt(contextState.device.alertDistance, 10)
@@ -203,11 +211,12 @@ export function useHome({currentDistance}: HomeProps): Hook {
 
   const addDevice = () => {
     if (Platform.OS === 'ios') {
-      bleManager.onStateChange(state => {
+      const subscription = bleManager.onStateChange(state => {
         if (state === 'PoweredOn' && compatibleDevice) {
           connectToDevice(compatibleDevice, false);
+          subscription.remove();
         }
-      });
+      }, true);
     } else {
       compatibleDevice && connectToDevice(compatibleDevice, false);
     }

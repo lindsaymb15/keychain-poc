@@ -26,6 +26,7 @@ import {
   COLOR_SECONDARY,
 } from '../../../constants/theme';
 import {useAppContext} from '../../../App/App';
+import {Fragment} from 'react';
 
 export interface HomeProps {
   currentDistance: number;
@@ -52,9 +53,8 @@ export default function Home({currentDistance}: HomeProps) {
   } = useHome({currentDistance});
 
   const {state} = useAppContext();
-
   return (
-    <>
+    <Fragment>
       <View style={styles.homeTopContainer}>
         <Header />
         <Text style={[styles.text, styles.greetingText]}>Hi User,</Text>
@@ -248,6 +248,6 @@ export default function Home({currentDistance}: HomeProps) {
           </TouchableWithoutFeedback>
         </Modal>
       </Portal>
-    </>
+    </Fragment>
   );
 }

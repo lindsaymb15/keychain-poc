@@ -147,7 +147,7 @@ function App(): React.JSX.Element {
   const rangeBeacons = async () => {
     const region = {
       identifier: 'ESP TAG APP',
-      uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
+      uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825', // Why this is burned ?
       major: 10167,
       minor: 61958,
     };
@@ -163,7 +163,7 @@ function App(): React.JSX.Element {
       await Beacons.startRangingBeaconsInRegion(region);
       console.log('Beacons ranging started succesfully!');
     } catch (err) {
-      console.log(`Beacons ranging not started, error: ${err}`);
+      console.error(`Beacons ranging not started, error: ${err}`);
     }
 
     if (Platform.OS === 'ios') {
@@ -178,6 +178,18 @@ function App(): React.JSX.Element {
           beacon.rssi !== 0 &&
           beacon.uuid === 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825'
         ) {
+          const time = new Date();
+          // console.log(
+          //   '🚀 ~ file: App.tsx:189 ~ beacons.map ~ beacon:',
+          //   'accuracy: ',
+          //   beacon.accuracy,
+          //   'rssi: ',
+          //   beacon.rssi,
+          //   'time:',
+          //   time,
+          // );
+
+          console.log(beacon.rssi);
           const pathLossExponent = 2.0;
           const distance = Math.pow(
             10,

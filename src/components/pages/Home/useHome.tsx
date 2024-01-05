@@ -149,7 +149,9 @@ export function useHome({currentDistance}: HomeProps): Hook {
             handleSaveDevice(readWriteCharacteristic);
           }
           if (sendAlert) {
-            const writeValue = isAlertTurnOn
+            ///Ponerlos en una cola de 20//
+            //si el promedio es > 85 esta lejos enciende la luz
+            const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
               ? uint16ToBase64(1)
               : uint16ToBase64(0);
             readWriteCharacteristic
@@ -159,15 +161,18 @@ export function useHome({currentDistance}: HomeProps): Hook {
                 console.log('CANCEL', err);
                 connDevice.cancelConnection();
               });
-          } else {
-            await connDevice.cancelConnection();
           }
+          // else {
+          //   connDevice.cancelConnection();
+          // }
         } catch (error) {
+          console.log('DESCONECTADO - 1');
           console.log(error);
-          connDevice.cancelConnection;
+          // connDevice.cancelConnection;
         }
       })
       .catch(error => {
+        console.log('DESCONECTADO - 2');
         console.log(error);
       });
   };
@@ -175,16 +180,23 @@ export function useHome({currentDistance}: HomeProps): Hook {
   const alertDevice = async () => {
     const device = contextState.device?.device;
     const deviceId = contextState.device?.device?.id;
+    // console.log(
+    //   '🚀 ~ file: useHome.tsx:140 ~ alertDevice ~ alertDevice:',
+    //   'alertDevice',
+    // );
 
-    if (device && deviceId) {
-      const subscription = bleManager.onStateChange(state => {
-        if (state === 'PoweredOn') {
-          console.log('emit');
-          connectToDevice(device, true);
-          subscription.remove();
-        }
-      }, true);
-    }
+    // if (device && deviceId) {
+    //   const subscription = bleManager.onStateChange(state => {
+    //     if (state === 'PoweredOn') {
+    //       console.log(
+    //         '🚀 ~ file: useHome.tsx:128 ~ subscription ~ emit:',
+    //         'emit',
+    //       );
+    //       connectToDevice(device, true);
+    //       subscription.remove();
+    //     }
+    //   }, true);
+    // }
   };
 
   const disconnectAlert = async () => {
@@ -209,6 +221,10 @@ export function useHome({currentDistance}: HomeProps): Hook {
   useEffect(() => {
     console.log(currentDistance);
     setBiometrics();
+    // console.log(
+    //   '🚀 ~ file: useHome.tsx:144 ~ currentDistance:',
+    //   currentDistance,
+    // );
     if (
       contextState.device &&
       currentDistance > parseInt(contextState.device.alertDistance, 10)
@@ -243,6 +259,10 @@ export function useHome({currentDistance}: HomeProps): Hook {
       }
     }, 10000);
     bleManager.startDeviceScan(null, null, (error, device) => {
+      console.log(
+        '🚀 ~ file: useHome.tsx:188 ~ bleManager.startDeviceScan ~ device:',
+        device,
+      );
       if (error) {
         console.error(error);
         bleManager.stopDeviceScan();

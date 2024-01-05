@@ -179,6 +179,12 @@ function App(): React.JSX.Element {
           beacon.uuid === 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825'
         ) {
           const time = new Date();
+          const opciones = {
+            timeZone: 'America/Mexico_City', // UTC-6
+            hour12: true, // Para usar el formato de 24 horas
+          };
+          const fechaHoraUTC6 = time.toLocaleString('es-MX', opciones);
+
           // console.log(
           //   '🚀 ~ file: App.tsx:189 ~ beacons.map ~ beacon:',
           //   'accuracy: ',
@@ -189,12 +195,15 @@ function App(): React.JSX.Element {
           //   time,
           // );
 
-          console.log(beacon.rssi);
+          console.log('RSSI: ', beacon.rssi);
+          console.log('TIME: ', fechaHoraUTC6);
+
           const pathLossExponent = 2.0;
           const distance = Math.pow(
             10,
             (-69 - beacon.rssi) / (10 * pathLossExponent),
           );
+          console.log('Distancia: ', distance);
           setCurrentDistance(distance);
         }
       });

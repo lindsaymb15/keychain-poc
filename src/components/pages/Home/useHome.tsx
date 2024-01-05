@@ -94,6 +94,8 @@ export function useHome({currentDistance}: HomeProps): Hook {
             handleSaveDevice(readWriteCharacteristic);
           }
           if (sendAlert) {
+            ///Ponerlos en una cola de 20//
+            //si el promedio es > 85 esta lejos enciende la luz
             const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
               ? uint16ToBase64(1)
               : uint16ToBase64(0);
@@ -185,6 +187,10 @@ export function useHome({currentDistance}: HomeProps): Hook {
       }
     }, 10000);
     bleManager.startDeviceScan(null, null, (error, device) => {
+      console.log(
+        '🚀 ~ file: useHome.tsx:188 ~ bleManager.startDeviceScan ~ device:',
+        device,
+      );
       if (error) {
         console.error(error);
         bleManager.stopDeviceScan();

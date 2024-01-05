@@ -12,9 +12,12 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
     "base-64": "^1.0.0",
+    "cocoapods": "0.0.0",
+    "pod-install": "^0.1.39",
     "react": "18.2.0",
     "react-native": "0.73.0",
     "react-native-beacons-manager": "^1.0.7",
+    "react-native-biometrics": "^3.0.1",
     "react-native-ble-plx": "^3.1.2",
     "react-native-kontaktio": "^4.1.0",
     "react-native-paper": "^4.5.0",

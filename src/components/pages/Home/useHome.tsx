@@ -3,6 +3,7 @@ import {Platform} from 'react-native';
 import {BleManager, Characteristic, Device} from 'react-native-ble-plx';
 import {encode} from 'base-64';
 import {useAppContext} from '../../../App/App';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 
 interface HomeProps {
   currentDistance: number;
@@ -25,13 +26,16 @@ interface Hook {
   increaseDistance: () => void;
   decreaseDistance: () => void;
   compatibleDevice?: Device;
+  disconnectAlert?: () => void;
+  isAlert: boolean;
+  handleAuthenticate: () => void;
+  biometricsType: string;
 }
 
 export function useHome({currentDistance}: HomeProps): Hook {
   const bleManager = new BleManager();
 
   const {state: contextState, dispatch} = useAppContext();
-
   const handleSaveDevice = (readWriteCharacteristic: Characteristic) => {
     dispatch({
       type: 'SET_DEVICE',
@@ -52,6 +56,55 @@ export function useHome({currentDistance}: HomeProps): Hook {
   const [newDeviceDistance, setNewDeviceDistance] = useState('2');
 
   const [compatibleDevice, setCompatibleDevice] = useState<Device>();
+  const [isAlert, setIsAlert] = useState(true);
+  const [biometricsType, setBiometricsType] = useState('');
+
+  const handleAuthenticate = async () => {
+    try {
+      const biometrics = new ReactNativeBiometrics({
+        allowDeviceCredentials: true,
+      });
+      const {available} = await biometrics.isSensorAvailable();
+      if (available) {
+        const result = await biometrics.simplePrompt({
+          promptMessage: 'Authenticate',
+        });
+        if (result.success) {
+          console.log('SUCCESS');
+          setIsAlert(false);
+          // Biometric authentication successful
+        } else {
+          console.log('FAIL');
+          // Biometric authentication failed
+        }
+      } else {
+        // Biometric authentication not available
+        // fallback to username/password login
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const setBiometrics = async () => {
+    try {
+      const biometrics = new ReactNativeBiometrics({
+        allowDeviceCredentials: true,
+      });
+      biometrics.isSensorAvailable().then(resultObject => {
+        const {available, biometryType} = resultObject;
+        if (available && biometryType === BiometryTypes.TouchID) {
+          console.log('TouchID is supported');
+          setBiometricsType('touchid');
+        } else if (available && biometryType === BiometryTypes.FaceID) {
+          console.log('FaceID is supported');
+          setBiometricsType('faceid');
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // const [isAlerted, setIsAlerted] = useState(false);
 
@@ -78,12 +131,14 @@ export function useHome({currentDistance}: HomeProps): Hook {
     sendAlert: boolean,
     isAlertTurnOn = true,
   ) => {
+    console.log('isAlert', isAlertTurnOn);
     bleManager
       .connectToDevice(device.id)
       .then(async connDevice => {
         try {
           console.log('device connected');
           await connDevice.discoverAllServicesAndCharacteristics();
+          console.log('HERE');
           const services = await connDevice.services();
           const service = services[0];
           const characteristics = await connDevice.characteristicsForService(
@@ -101,11 +156,11 @@ export function useHome({currentDistance}: HomeProps): Hook {
               .writeWithResponse(writeValue)
               .then(() => connDevice.cancelConnection())
               .catch(err => {
-                console.log(err);
+                console.log('CANCEL', err);
                 connDevice.cancelConnection();
               });
           } else {
-            connDevice.cancelConnection();
+            await connDevice.cancelConnection();
           }
         } catch (error) {
           console.log(error);
@@ -132,12 +187,28 @@ export function useHome({currentDistance}: HomeProps): Hook {
     }
   };
 
+  const disconnectAlert = async () => {
+    const device = contextState.device?.device;
+    const deviceId = contextState.device?.device?.id;
+
+    if (device && deviceId) {
+      const subscription = bleManager.onStateChange(state => {
+        if (state === 'PoweredOn') {
+          console.log('disconnect alert');
+          connectToDevice(device, true, false);
+          subscription.remove();
+        }
+      }, true);
+    }
+  };
+
   const lookForDevices = () => {
     setConnectionStatus('Searching');
   };
 
   useEffect(() => {
     console.log(currentDistance);
+    setBiometrics();
     if (
       contextState.device &&
       currentDistance > parseInt(contextState.device.alertDistance, 10)
@@ -250,5 +321,9 @@ export function useHome({currentDistance}: HomeProps): Hook {
     increaseDistance,
     decreaseDistance,
     compatibleDevice,
+    disconnectAlert,
+    isAlert,
+    handleAuthenticate,
+    biometricsType,
   };
 }

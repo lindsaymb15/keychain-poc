@@ -26,7 +26,8 @@ import {
   COLOR_SECONDARY,
 } from '../../../constants/theme';
 import {useAppContext} from '../../../App/App';
-
+// import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+import BiometricsAlert from '../../molecules/BiometricsAlert';
 export interface HomeProps {
   currentDistance: number;
 }
@@ -49,6 +50,9 @@ export default function Home({currentDistance}: HomeProps) {
     increaseDistance,
     decreaseDistance,
     compatibleDevice,
+    isAlert,
+    handleAuthenticate,
+    biometricsType,
   } = useHome({currentDistance});
 
   const {state} = useAppContext();
@@ -59,6 +63,19 @@ export default function Home({currentDistance}: HomeProps) {
         <Header />
         <Text style={[styles.text, styles.greetingText]}>Hi User,</Text>
         <Text style={[styles.text, styles.welcomeText]}>Welcome!</Text>
+        <Portal>
+          {/* {state.device && ( */}
+          <Modal
+            visible={isAlert}
+            contentContainerStyle={styles.modal}
+            dismissable={false}>
+            <BiometricsAlert
+              handleAuthenticate={handleAuthenticate}
+              biometricsType={biometricsType}
+            />
+          </Modal>
+          {/* )} */}
+        </Portal>
       </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
         {state.device ? (

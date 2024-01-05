@@ -35,6 +35,10 @@
 	<string>PocketPal needs access to your Bluetooth</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>PocketPal needs access to your Bluetooth</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>PocketPal needs to access biometics</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>PocketPal needs access to your location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>PocketPal needs access to your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -56,8 +60,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>PocketPal needs access to your location</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

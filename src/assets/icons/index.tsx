@@ -7,6 +7,9 @@ import LocationIcon from './LocationIcon';
 import AlertIcon from './AlertIcon';
 import CurrentLocationIcon from './CurrentLocationIcon';
 import PlayIcon from './PlayIcon';
+import AlertIconModal from './AlertIconModal';
+import TouchIcon from './TouchIcon';
+import FaceIcon from './FaceIcon';
 
 export {
   LocationPinIcon,
@@ -18,4 +21,7 @@ export {
   AlertIcon,
   CurrentLocationIcon,
   PlayIcon,
+  AlertIconModal,
+  TouchIcon,
+  FaceIcon,
 };

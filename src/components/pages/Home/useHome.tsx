@@ -7,6 +7,7 @@ import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 
 interface HomeProps {
   currentDistance: number;
+  rssi: number;
 }
 
 interface Hook {
@@ -32,7 +33,7 @@ interface Hook {
   biometricsType: string;
 }
 
-export function useHome({currentDistance}: HomeProps): Hook {
+export function useHome({currentDistance, rssi}: HomeProps): Hook {
   const bleManager = new BleManager();
 
   const {state: contextState, dispatch} = useAppContext();
@@ -56,8 +57,10 @@ export function useHome({currentDistance}: HomeProps): Hook {
   const [newDeviceDistance, setNewDeviceDistance] = useState('2');
 
   const [compatibleDevice, setCompatibleDevice] = useState<Device>();
-  const [isAlert, setIsAlert] = useState(true);
+  const [isAlert, setIsAlert] = useState(false);
   const [biometricsType, setBiometricsType] = useState('');
+  const [queue, setQueue] = useState<number[]>([]);
+  const [rssiAVR, setRssiAVR] = useState(0);
 
   const handleAuthenticate = async () => {
     try {
@@ -72,6 +75,7 @@ export function useHome({currentDistance}: HomeProps): Hook {
         if (result.success) {
           console.log('SUCCESS');
           setIsAlert(false);
+          disconnectAlert();
           // Biometric authentication successful
         } else {
           console.log('FAIL');
@@ -83,6 +87,24 @@ export function useHome({currentDistance}: HomeProps): Hook {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+  const getAVR = (list: number[]) => {
+    const sum = list.reduce(function (acumulador, number) {
+      return acumulador + number;
+    }, 0);
+    const average = sum / list.length;
+    return average;
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const enqueue = (item: number) => {
+    // Ensure the queue length does not exceed 20
+    if (queue.length <= 20) {
+      setQueue([...queue, item]);
+    } else {
+      const temporal = queue;
+      temporal?.shift();
+      setQueue(temporal);
     }
   };
 
@@ -138,7 +160,6 @@ export function useHome({currentDistance}: HomeProps): Hook {
         try {
           console.log('device connected');
           await connDevice.discoverAllServicesAndCharacteristics();
-          console.log('HERE');
           const services = await connDevice.services();
           const service = services[0];
           const characteristics = await connDevice.characteristicsForService(
@@ -151,20 +172,23 @@ export function useHome({currentDistance}: HomeProps): Hook {
           if (sendAlert) {
             ///Ponerlos en una cola de 20//
             //si el promedio es > 85 esta lejos enciende la luz
-            const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
-              ? uint16ToBase64(1)
-              : uint16ToBase64(0);
-            readWriteCharacteristic
-              .writeWithResponse(writeValue)
-              .then(() => connDevice.cancelConnection())
-              .catch(err => {
-                console.log('CANCEL', err);
-                connDevice.cancelConnection();
-              });
+            if (rssiAVR >= 80) {
+              console.log('ALERT');
+              const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
+                ? uint16ToBase64(1)
+                : uint16ToBase64(0);
+              readWriteCharacteristic
+                .writeWithResponse(writeValue)
+                .then(() => connDevice.cancelConnection())
+                .catch(err => {
+                  console.log('CANCEL', err);
+                  connDevice.cancelConnection();
+                });
+            }
+            // else {
+            //   connDevice.cancelConnection();
+            // }
           }
-          // else {
-          //   connDevice.cancelConnection();
-          // }
         } catch (error) {
           console.log('DESCONECTADO - 1');
           console.log(error);
@@ -180,23 +204,20 @@ export function useHome({currentDistance}: HomeProps): Hook {
   const alertDevice = async () => {
     const device = contextState.device?.device;
     const deviceId = contextState.device?.device?.id;
-    // console.log(
-    //   '🚀 ~ file: useHome.tsx:140 ~ alertDevice ~ alertDevice:',
-    //   'alertDevice',
-    // );
 
-    // if (device && deviceId) {
-    //   const subscription = bleManager.onStateChange(state => {
-    //     if (state === 'PoweredOn') {
-    //       console.log(
-    //         '🚀 ~ file: useHome.tsx:128 ~ subscription ~ emit:',
-    //         'emit',
-    //       );
-    //       connectToDevice(device, true);
-    //       subscription.remove();
-    //     }
-    //   }, true);
-    // }
+    if (device && deviceId) {
+      const subscription = bleManager.onStateChange(state => {
+        if (state === 'PoweredOn') {
+          console.log(
+            '🚀 ~ file: useHome.tsx:128 ~ subscription ~ emit:',
+            'emit',
+          );
+          setIsAlert(true);
+          connectToDevice(device, true);
+          subscription.remove();
+        }
+      }, true);
+    }
   };
 
   const disconnectAlert = async () => {
@@ -219,18 +240,26 @@ export function useHome({currentDistance}: HomeProps): Hook {
   };
 
   useEffect(() => {
+    //Adds the RSSI to a queue of max 20 items
+    if (rssi) {
+      enqueue(rssi);
+    }
+    console.log('RSSI QUEUE: ', queue);
+    setRssiAVR(getAVR(queue));
+    console.log('AVERAGE RSSI:', rssiAVR);
+  }, [enqueue, rssi, queue, rssiAVR]);
+
+  useEffect(() => {
     console.log(currentDistance);
-    setBiometrics();
-    // console.log(
-    //   '🚀 ~ file: useHome.tsx:144 ~ currentDistance:',
-    //   currentDistance,
-    // );
     if (
       contextState.device &&
       currentDistance > parseInt(contextState.device.alertDistance, 10)
     ) {
       contextState.device.device && alertDevice();
+    } else {
+      setIsAlert(false);
     }
+    //setBiometrics();
     // else if (
     //   contextState.device &&
     //   isAlerted &&

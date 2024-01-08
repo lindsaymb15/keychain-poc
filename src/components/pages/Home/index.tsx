@@ -32,9 +32,10 @@ import {Fragment} from 'react';
 
 export interface HomeProps {
   currentDistance: number;
+  rssi: number;
 }
 
-export default function Home({currentDistance}: HomeProps) {
+export default function Home({currentDistance, rssi}: HomeProps) {
   const {
     compatibleDevicesModalVisible,
     hideCompatibleDevicesModal,
@@ -55,7 +56,7 @@ export default function Home({currentDistance}: HomeProps) {
     isAlert,
     handleAuthenticate,
     biometricsType,
-  } = useHome({currentDistance});
+  } = useHome({currentDistance, rssi});
 
   const {state} = useAppContext();
   return (

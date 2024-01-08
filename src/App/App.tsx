@@ -26,6 +26,8 @@ interface DeviceData {
   alertDistance: string;
   name: string;
   rwCharacteristic: Characteristic;
+  isAlert?: boolean;
+  rssi?: number;
 }
 
 interface AppState {
@@ -109,6 +111,7 @@ export interface Beacon {
 function App(): React.JSX.Element {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [currentDistance, setCurrentDistance] = useState(0);
+  const [rssi, setRssi]= useState(0);
 
   // Load data from AsyncStorage on component mount
   useEffect(() => {
@@ -194,8 +197,8 @@ function App(): React.JSX.Element {
           //   'time:',
           //   time,
           // );
-
           console.log('RSSI: ', beacon.rssi);
+          setRssi(beacon.rssi);
           console.log('TIME: ', fechaHoraUTC6);
 
           const pathLossExponent = 2.0;
@@ -222,7 +225,7 @@ function App(): React.JSX.Element {
       <Provider>
         <SafeAreaView style={styles.container}>
           <StatusBar />
-          <Home currentDistance={currentDistance} />
+          <Home currentDistance={currentDistance} rssi={rssi} />
         </SafeAreaView>
       </Provider>
     </AppContext.Provider>

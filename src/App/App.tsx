@@ -5,6 +5,7 @@ import React, {
   useContext,
   useReducer,
   useState,
+  useRef,
 } from 'react';
 import {
   DeviceEventEmitter,
@@ -12,6 +13,7 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
+  AppState,
 } from 'react-native';
 import {useEffect} from 'react';
 import styles from './styles';
@@ -20,6 +22,8 @@ import {Home} from '../components/pages';
 import Beacons from 'react-native-beacons-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Characteristic, Device} from 'react-native-ble-plx';
+import BackgroundActions from 'react-native-background-actions';
+//import BackgroundService from 'react-native-background-actions';
 
 interface DeviceData {
   device?: Device;
@@ -28,24 +32,24 @@ interface DeviceData {
   rwCharacteristic: Characteristic;
 }
 
-interface AppState {
+interface AppLocalState {
   device: DeviceData | null;
 }
 
 type AppAction = {type: 'SET_DEVICE'; payload: DeviceData};
 
 interface AppContextType {
-  state: AppState;
+  state: AppLocalState;
   dispatch: Dispatch<AppAction>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const initialState: AppState = {
+const initialState: AppLocalState = {
   device: null,
 };
 
-const appReducer: Reducer<AppState, AppAction> = (state, action) => {
+const appReducer: Reducer<AppLocalState, AppAction> = (state, action) => {
   switch (action.type) {
     case 'SET_DEVICE':
       return {...state, device: action.payload};
@@ -107,8 +111,104 @@ export interface Beacon {
 }
 
 function App(): React.JSX.Element {
+  const appState = useRef(AppState.currentState);
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [currentDistance, setCurrentDistance] = useState(0);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const region = {
+    identifier: 'ESP TAG APP',
+    uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825', // Why this is burned ?
+    major: 10167,
+    minor: 61958,
+  };
+
+  //read the AppState
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener('change', nextAppState => {
+  //     if (
+  //       appState.current.match(/inactive|background/) &&
+  //       nextAppState === 'active'
+  //     ) {
+  //       console.log('App has come to the foreground!');
+  //     }
+
+  //     appState.current = nextAppState;
+  //     setAppStateVisible(appState.current);
+  //     console.log('AppState', appState.current);
+  //   });
+
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   //Original
+  //   requestBluetoothPermission();
+  //   rangeBeacons();
+  // }, []);
+
+  useEffect(() => {
+    requestBluetoothPermission();
+    const startBackgroundTask = async () => {
+      if (Platform.OS === 'android') {
+        Beacons.detectIBeacons();
+      } else {
+        Beacons.requestAlwaysAuthorization();
+        Beacons.startMonitoringForRegion(region);
+      }
+
+      try {
+        await Beacons.startRangingBeaconsInRegion(region);
+        console.log('Beacons ranging started successfully in the foreground!');
+      } catch (err) {
+        console.error(
+          `Beacons ranging not started in the foreground, error: ${err}`,
+        );
+      }
+
+      if (Platform.OS === 'ios') {
+        Beacons.startUpdatingLocation();
+      }
+
+      const options = {
+        taskName: 'BeaconTask',
+        taskTitle: 'Beacon Background Task',
+        taskDesc: 'Processing beacon data in the background',
+        taskIcon: {
+          name: 'ic_launcher',
+          type: 'mipmap',
+        },
+        color: '#FF00FF', // Notification color (Android only)
+        parameters: {
+          key: 'value',
+        },
+      };
+
+      // Start the app to the background
+      AppState.addEventListener('change', async nextAppState => {
+        if (appState.current === 'active' && nextAppState === 'background') {
+          console.log('Beacons ranging should start in the BACKGROUND!');
+          try {
+            await BackgroundActions.start(performBackgroundTask, options);
+            console.log('Background task started successfully!');
+          } catch (err) {
+            console.error(`Background task not started, error: ${err}`);
+          }
+        }
+      });
+    };
+
+    startBackgroundTask();
+  }, []);
+
+  async function performBackgroundTask() {
+    // Perform your background task logic here
+    console.log('Running background task...');
+    for (let i = 0; BackgroundActions.isRunning(); i++) {
+      console.log(i);
+    }
+  }
 
   // Load data from AsyncStorage on component mount
   useEffect(() => {
@@ -139,37 +239,32 @@ function App(): React.JSX.Element {
     saveData();
   }, [state.device]);
 
-  useEffect(() => {
-    requestBluetoothPermission();
-    rangeBeacons();
-  }, []);
+  // const rangeBeacons = async () => {
+  //   const region = {
+  //     identifier: 'ESP TAG APP',
+  //     uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825', // Why this is burned ?
+  //     major: 10167,
+  //     minor: 61958,
+  //   };
 
-  const rangeBeacons = async () => {
-    const region = {
-      identifier: 'ESP TAG APP',
-      uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825', // Why this is burned ?
-      major: 10167,
-      minor: 61958,
-    };
+  //   if (Platform.OS === 'android') {
+  //     Beacons.detectIBeacons();
+  //   } else {
+  //     Beacons.requestAlwaysAuthorization();
+  //     Beacons.startMonitoringForRegion(region);
+  //   }
 
-    if (Platform.OS === 'android') {
-      Beacons.detectIBeacons();
-    } else {
-      Beacons.requestAlwaysAuthorization();
-      Beacons.startMonitoringForRegion(region);
-    }
+  //   try {
+  //     await Beacons.startRangingBeaconsInRegion(region);
+  //     console.log('Beacons ranging started succesfully!');
+  //   } catch (err) {
+  //     console.error(`Beacons ranging not started, error: ${err}`);
+  //   }
 
-    try {
-      await Beacons.startRangingBeaconsInRegion(region);
-      console.log('Beacons ranging started succesfully!');
-    } catch (err) {
-      console.error(`Beacons ranging not started, error: ${err}`);
-    }
-
-    if (Platform.OS === 'ios') {
-      Beacons.startUpdatingLocation();
-    }
-  };
+  //   if (Platform.OS === 'ios') {
+  //     Beacons.startUpdatingLocation();
+  //   }
+  // };
 
   useEffect(() => {
     DeviceEventEmitter.addListener('beaconsDidRange', ({beacons}) => {
@@ -184,16 +279,6 @@ function App(): React.JSX.Element {
             hour12: true, // Para usar el formato de 24 horas
           };
           const fechaHoraUTC6 = time.toLocaleString('es-MX', opciones);
-
-          // console.log(
-          //   '🚀 ~ file: App.tsx:189 ~ beacons.map ~ beacon:',
-          //   'accuracy: ',
-          //   beacon.accuracy,
-          //   'rssi: ',
-          //   beacon.rssi,
-          //   'time:',
-          //   time,
-          // );
 
           console.log('RSSI: ', beacon.rssi);
           console.log('TIME: ', fechaHoraUTC6);

@@ -11,10 +11,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		354910B12B32389900FBF1EF /* libRNiBeacon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 354910B02B32383400FBF1EF /* libRNiBeacon.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9A9BA68694C5D5FB233AF10A /* libPods-PocketPal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 837D5981313A321A4A75CEA1 /* libPods-PocketPal.a */; };
 		B3FF89E21E67F28E8A7A9CE4 /* libPods-PocketPal-PocketPalTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE9F182AB97882B054A62EE4 /* libPods-PocketPal-PocketPalTests.a */; };
+		C8ABEF1B2B48871800E58463 /* libRNiBeacon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C8ABEF192B48871800E58463 /* libRNiBeacon.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,9 +25,9 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = PocketPal;
 		};
-		354910AF2B32383400FBF1EF /* PBXContainerItemProxy */ = {
+		C8ABEF0E2B48800900E58463 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 354910AB2B32383400FBF1EF /* RNiBeacon.xcodeproj */;
+			containerPortal = C8ABEF0A2B48800900E58463 /* RNiBeacon.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 0D03EBDE1E56B1E700C55E6B;
 			remoteInfo = RNiBeacon;
@@ -45,12 +45,13 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PocketPal/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PocketPal/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PocketPal/main.m; sourceTree = "<group>"; };
-		354910AB2B32383400FBF1EF /* RNiBeacon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNiBeacon.xcodeproj; path = "../node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj"; sourceTree = "<group>"; };
 		47DBD8221A902BB8D59EB3C8 /* Pods-PocketPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.release.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.release.xcconfig"; sourceTree = "<group>"; };
 		7D93D0B48BDC992C54DDB663 /* Pods-PocketPal-PocketPalTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal-PocketPalTests.release.xcconfig"; path = "Target Support Files/Pods-PocketPal-PocketPalTests/Pods-PocketPal-PocketPalTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PocketPal/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		837D5981313A321A4A75CEA1 /* libPods-PocketPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PocketPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C75A39841544A7B6E5C255EE /* Pods-PocketPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.debug.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.debug.xcconfig"; sourceTree = "<group>"; };
+		C8ABEF0A2B48800900E58463 /* RNiBeacon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNiBeacon.xcodeproj; path = "../node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj"; sourceTree = "<group>"; };
+		C8ABEF192B48871800E58463 /* libRNiBeacon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRNiBeacon.a; path = "../../../Library/Developer/Xcode/DerivedData/RNiBeacon-bhlwpjxfaysarnflpiegobsdcepf/Build/Products/Debug-iphoneos/libRNiBeacon.a"; sourceTree = "<group>"; };
 		DE9F182AB97882B054A62EE4 /* libPods-PocketPal-PocketPalTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PocketPal-PocketPalTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -68,8 +69,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				354910B12B32389900FBF1EF /* libRNiBeacon.a in Frameworks */,
 				9A9BA68694C5D5FB233AF10A /* libPods-PocketPal.a in Frameworks */,
+				C8ABEF1B2B48871800E58463 /* libRNiBeacon.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +114,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C8ABEF192B48871800E58463 /* libRNiBeacon.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				837D5981313A321A4A75CEA1 /* libPods-PocketPal.a */,
 				DE9F182AB97882B054A62EE4 /* libPods-PocketPal-PocketPalTests.a */,
@@ -120,18 +122,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		354910AC2B32383400FBF1EF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				354910B02B32383400FBF1EF /* libRNiBeacon.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				354910AB2B32383400FBF1EF /* RNiBeacon.xcodeproj */,
+				C8ABEF0A2B48800900E58463 /* RNiBeacon.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -167,6 +161,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		C8ABEF0B2B48800900E58463 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C8ABEF0F2B48800900E58463 /* libRNiBeacon.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -197,9 +199,9 @@
 			buildPhases = (
 				5F22098DAB510B643C5C8878 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
-				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				6212691ED2BA716E9960CCC7 /* [CP] Embed Pods Frameworks */,
 				66AC406712EB283DEF29F7FE /* [CP] Copy Pods Resources */,
 			);
@@ -242,8 +244,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 354910AC2B32383400FBF1EF /* Products */;
-					ProjectRef = 354910AB2B32383400FBF1EF /* RNiBeacon.xcodeproj */;
+					ProductGroup = C8ABEF0B2B48800900E58463 /* Products */;
+					ProjectRef = C8ABEF0A2B48800900E58463 /* RNiBeacon.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -255,11 +257,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		354910B02B32383400FBF1EF /* libRNiBeacon.a */ = {
+		C8ABEF0F2B48800900E58463 /* libRNiBeacon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRNiBeacon.a;
-			remoteRef = 354910AF2B32383400FBF1EF /* PBXContainerItemProxy */;
+			remoteRef = C8ABEF0E2B48800900E58463 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -559,6 +561,8 @@
 					"\"$(PODS_TARGET_SRCROOT)/include/\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 				);
 				INFOPLIST_FILE = PocketPal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -641,6 +645,8 @@
 					"\"$(PODS_ROOT)/boost\"",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 					"\"$(PODS_TARGET_SRCROOT)/include/\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 				);

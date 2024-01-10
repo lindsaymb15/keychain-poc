@@ -111,7 +111,7 @@ export interface Beacon {
 function App(): React.JSX.Element {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [currentDistance, setCurrentDistance] = useState(0);
-  const [rssi, setRssi]= useState(0);
+  const [rssi, setRssi] = useState(0);
 
   // Load data from AsyncStorage on component mount
   useEffect(() => {

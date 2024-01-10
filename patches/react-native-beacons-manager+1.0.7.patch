@@ -1,13 +1,5 @@
-diff --git a/node_modules/react-native-beacons-manager/.DS_Store b/node_modules/react-native-beacons-manager/.DS_Store
-new file mode 100644
-index 0000000..232f8b8
-Binary files /dev/null and b/node_modules/react-native-beacons-manager/.DS_Store differ
-diff --git a/node_modules/react-native-beacons-manager/ios/.DS_Store b/node_modules/react-native-beacons-manager/ios/.DS_Store
-new file mode 100644
-index 0000000..9a7ebaf
-Binary files /dev/null and b/node_modules/react-native-beacons-manager/ios/.DS_Store differ
 diff --git a/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/project.pbxproj b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/project.pbxproj
-index 1616c21..126b02a 100644
+index 1616c21..b30c495 100644
 --- a/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/project.pbxproj
 +++ b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/project.pbxproj
 @@ -107,6 +107,7 @@
@@ -18,25 +10,25 @@ index 1616c21..126b02a 100644
  				en,
  			);
  			mainGroup = 0D03EBD51E56B1E600C55E6B;
-@@ -238,7 +239,12 @@
+@@ -226,7 +227,12 @@
  			buildSettings = {
  				DEAD_CODE_STRIPPING = NO;
  				DEVELOPMENT_TEAM = "";
--				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../../react-native/React";
+-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../node_modules/react-native/React";
 +				HEADER_SEARCH_PATHS = (
-+					"$(SRCROOT)/../../../react-native/React",
-+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Yoga",
-+					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/YogaKit",
++					"$(SRCROOT)/../../node_modules/react-native/React",
 +					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/React-Core",
++					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/YogaKit",
++					"$(SRCROOT)/../../../../ios/Pods/Headers/Public/Yoga",
 +				);
  				OTHER_LDFLAGS = "-ObjC";
  				PRODUCT_NAME = "$(TARGET_NAME)";
  				SKIP_INSTALL = YES;
-diff --git a/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/lindsaymorales.xcuserdatad/xcschemes/xcschememanagement.plist b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/lindsaymorales.xcuserdatad/xcschemes/xcschememanagement.plist
+diff --git a/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/admin.xcuserdatad/xcschemes/xcschememanagement.plist b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/admin.xcuserdatad/xcschemes/xcschememanagement.plist
 new file mode 100644
-index 0000000..9a5b5d6
+index 0000000..6009b79
 --- /dev/null
-+++ b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/lindsaymorales.xcuserdatad/xcschemes/xcschememanagement.plist
++++ b/node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj/xcuserdata/admin.xcuserdatad/xcschemes/xcschememanagement.plist
 @@ -0,0 +1,14 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -47,7 +39,7 @@ index 0000000..9a5b5d6
 +		<key>RNiBeacon.xcscheme_^#shared#^_</key>
 +		<dict>
 +			<key>orderHint</key>
-+			<integer>66</integer>
++			<integer>72</integer>
 +		</dict>
 +	</dict>
 +</dict>

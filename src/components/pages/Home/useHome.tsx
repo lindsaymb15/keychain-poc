@@ -172,23 +172,23 @@ export function useHome({currentDistance, rssi}: HomeProps): Hook {
           if (sendAlert) {
             ///Ponerlos en una cola de 20//
             //si el promedio es > 85 esta lejos enciende la luz
-            if (rssiAVR >= 80) {
-              console.log('ALERT');
-              const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
-                ? uint16ToBase64(1)
-                : uint16ToBase64(0);
-              readWriteCharacteristic
-                .writeWithResponse(writeValue)
-                .then(() => connDevice.cancelConnection())
-                .catch(err => {
-                  console.log('CANCEL', err);
-                  connDevice.cancelConnection();
-                });
-            }
-            // else {
-            //   connDevice.cancelConnection();
-            // }
+            // if (Math.abs(rssiAVR) >= 80) {
+            console.log('ALERT');
+            const writeValue = isAlertTurnOn //Enciende/Apaga la luz de distancia , azul
+              ? uint16ToBase64(1)
+              : uint16ToBase64(0);
+            readWriteCharacteristic
+              .writeWithResponse(writeValue)
+              .then(() => connDevice.cancelConnection())
+              .catch(err => {
+                console.log('CANCEL', err);
+                connDevice.cancelConnection();
+              });
           }
+          // else {
+          //   connDevice.cancelConnection();
+          // }
+          //}
         } catch (error) {
           console.log('DESCONECTADO - 1');
           console.log(error);
@@ -239,15 +239,15 @@ export function useHome({currentDistance, rssi}: HomeProps): Hook {
     setConnectionStatus('Searching');
   };
 
-  useEffect(() => {
-    //Adds the RSSI to a queue of max 20 items
-    if (rssi) {
-      enqueue(rssi);
-    }
-    console.log('RSSI QUEUE: ', queue);
-    setRssiAVR(getAVR(queue));
-    console.log('AVERAGE RSSI:', rssiAVR);
-  }, [enqueue, rssi, queue, rssiAVR]);
+  // useEffect(() => {
+  //   //Adds the RSSI to a queue of max 20 items
+  //   if (rssi) {
+  //     enqueue(rssi);
+  //   }
+  //   console.log('RSSI QUEUE: ', queue);
+  //   setRssiAVR(getAVR(queue));
+  //   console.log('AVERAGE RSSI:', rssiAVR);
+  // }, [enqueue, rssi, queue, rssiAVR]);
 
   useEffect(() => {
     console.log(currentDistance);

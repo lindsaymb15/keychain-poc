@@ -39,6 +39,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* PocketPalTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PocketPalTests.m; sourceTree = "<group>"; };
 		072EDA58EC0C7F507E463CE2 /* Pods-PocketPal-PocketPalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal-PocketPalTests.debug.xcconfig"; path = "Target Support Files/Pods-PocketPal-PocketPalTests/Pods-PocketPal-PocketPalTests.debug.xcconfig"; sourceTree = "<group>"; };
+		0A065DA99A90612623C4B69B /* Pods-PocketPal-PocketPalTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal-PocketPalTests.release.xcconfig"; path = "Target Support Files/Pods-PocketPal-PocketPalTests/Pods-PocketPal-PocketPalTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* PocketPal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PocketPal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = PocketPal/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = PocketPal/AppDelegate.mm; sourceTree = "<group>"; };
@@ -47,10 +48,12 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PocketPal/main.m; sourceTree = "<group>"; };
 		17E116B56848264C314F8640 /* libPods-PocketPal-PocketPalTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PocketPal-PocketPalTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BEA61533DF0A0CD731FE1F2 /* libPods-PocketPal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PocketPal.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EEB2613DE64A6CA7C0AB23F /* Pods-PocketPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.release.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.release.xcconfig"; sourceTree = "<group>"; };
 		354910AB2B32383400FBF1EF /* RNiBeacon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNiBeacon.xcodeproj; path = "../node_modules/react-native-beacons-manager/ios/RNiBeacon/RNiBeacon.xcodeproj"; sourceTree = "<group>"; };
 		76A7F38E783B46C1F86AC328 /* Pods-PocketPal-PocketPalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal-PocketPalTests.debug.xcconfig"; path = "Target Support Files/Pods-PocketPal-PocketPalTests/Pods-PocketPal-PocketPalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PocketPal/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		95EBF257CAFD172D80EC32DB /* Pods-PocketPal-PocketPalTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal-PocketPalTests.release.xcconfig"; path = "Target Support Files/Pods-PocketPal-PocketPalTests/Pods-PocketPal-PocketPalTests.release.xcconfig"; sourceTree = "<group>"; };
+		96B299857C100B36D8D41796 /* Pods-PocketPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.debug.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.debug.xcconfig"; sourceTree = "<group>"; };
 		9807708F56E42AB04FCDC2C1 /* Pods-PocketPal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.debug.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.debug.xcconfig"; sourceTree = "<group>"; };
 		C604FB435ED3E6C6B35C1D9B /* Pods-PocketPal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PocketPal.release.xcconfig"; path = "Target Support Files/Pods-PocketPal/Pods-PocketPal.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -82,10 +85,10 @@
 			children = (
 				00E356F21AD99517003FC87E /* PocketPalTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
-				C75A39841544A7B6E5C255EE /* Pods-PocketPal.debug.xcconfig */,
-				47DBD8221A902BB8D59EB3C8 /* Pods-PocketPal.release.xcconfig */,
 				072EDA58EC0C7F507E463CE2 /* Pods-PocketPal-PocketPalTests.debug.xcconfig */,
-				7D93D0B48BDC992C54DDB663 /* Pods-PocketPal-PocketPalTests.release.xcconfig */,
+				96B299857C100B36D8D41796 /* Pods-PocketPal.debug.xcconfig */,
+				2EEB2613DE64A6CA7C0AB23F /* Pods-PocketPal.release.xcconfig */,
+				0A065DA99A90612623C4B69B /* Pods-PocketPal-PocketPalTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -565,6 +568,8 @@
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 				);
 				INFOPLIST_FILE = PocketPal/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -648,6 +653,8 @@
 					"\"$(PODS_ROOT)/boost\"",
 					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
 					"\"$(PODS_TARGET_SRCROOT)/include/\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
+					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
 					"\"$(SRCROOT)/node_modules/react-native-beacons-manager/ios\"",
